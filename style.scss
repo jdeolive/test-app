@@ -1,0 +1,240 @@
+@import "node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,700&display=swap');
+
+$color1: rgba(76, 84, 84, 1);
+$color2: rgba(30, 168, 150, 1);
+
+body {
+  margin: 0;
+  color: white;
+  font-family: Roboto, sans-serif;
+}
+
+button {
+  background-color: transparent;
+  padding: 0.75rem 1.25rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+    font-style: italic;
+    font-weight: 100;
+  }
+}
+
+#app {
+  display: grid;
+  height: 100vh;
+  grid-template-rows: 75px 1fr 75px;
+}
+
+.header {
+  position: fixed;
+  width: 100%;
+  background-color: $color1;
+  grid-row: 1/2;
+  display: flex;
+
+  > div {
+    align-self: center;
+    padding: 1rem;
+  }
+
+  .brand {
+    flex-grow: 1;
+    h1 {
+      margin: 0;
+    }
+  }
+
+  .sale {
+    background-color: $color2;
+    border-left: 2px solid white;
+    border-right: 2px solid white;
+
+    h3 {
+      display: inline;
+      font-size: 1.5em;
+      text-transform: uppercase;
+      line-height: 2rem;
+      vertical-align: bottom;
+    }
+
+    .sale-expiry {
+      margin-top: 0.25rem;
+      font-weight: 100;
+      font-style: italic;
+      font-size: 0.75em;
+      text-align: right;
+    }
+  }
+
+  .cart {
+    span {
+      cursor: pointer;
+      &:hover {
+        svg {
+          color: #ccc;
+        }
+      }
+    }
+  }
+}
+
+.main {
+  grid-row: 2/3;
+
+  .content {
+    max-width: 1200px;
+    padding: 1rem;
+    margin: auto;
+
+    .products {
+      display: grid;
+      justify-content: center;
+      grid-gap: 0.5rem;
+      grid-template-columns: repeat(auto-fit, 256px);
+
+      > div {
+        border-radius: 2px;
+        border: 1px solid #ccc;
+        background-color: $color1;
+
+        .image {
+          height: 256px;
+          background-position: center;
+          background-size: contain;
+          border-top-left-radius: 2px;
+          border-top-right-radius: 2px;
+        }
+
+        .info {
+          padding: 0 0.5rem;
+          display: flex;
+          .title {
+            flex-grow: 1;
+          }
+        }
+
+        button {
+          margin: auto;
+          display: block;
+          border: 1px solid white;
+          color: white;
+
+          &:hover {
+            color: black;
+            background-color: #eee;
+
+            &:hover:disabled {
+              color: white;
+              background-color: transparent;
+            }
+          }
+        }
+
+        .stock {
+          padding: 1rem 0;
+          text-align: center;
+          font-size: smaller;
+          font-weight: lighter;
+          font-style: italic;
+        }
+      }
+    }
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  min-width: 50%;
+  padding: 1rem;
+  background: white;
+  color: $color1;
+  box-shadow: 2px 2px 20px 1px;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  max-height: 75vh;
+  overflow-y: scroll;
+
+  .modal-header {
+    display: flex;
+
+    h2 {
+      flex-grow: 1;
+      margin: 0;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #ccc;
+    }
+
+    div {
+      cursor: pointer;
+      &:hover {
+        svg {
+          color: lighten($color1, 0.1)
+        }
+      }
+    }
+  }
+
+  .modal-main, .modal-footer {
+    padding: 1rem;
+  }
+
+  .modal-main {
+    .cart-item {
+      display: flex;
+      padding: 0.5rem;
+      border-bottom: 1px solid #ccc;
+
+      img {
+        width: 64px;
+        height: 64px;
+      }
+
+      h4 {
+        margin: 0;
+      }
+
+      > h4 {
+        flex-grow: 1;
+      }
+
+      > h4, div {
+        align-self: center;
+      }
+    }
+  }
+
+  .modal-footer {
+    display: flex;
+    > div {
+      align-self: center;
+      text-align: right;
+      flex-grow: 1;
+    }
+  }
+}
+
+.fade-enter, .fade-leave-active {
+  opacity: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s ease
+}

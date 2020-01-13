@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Test App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+  <div id="app">
+    <div class="header">
+      <div class="brand">
+        <h1>Acme Cannabis Co.</h1>
+      </div>
+      <div class="sale" v-if="saleIsActive">
+        <i class="fas fa-certificate fa-2x"></i> <h3>Sale on now!</h3>
+        <div class="sale-expiry">
+          Expires in {{saleExpiry}} days.
+        </div>
+      </div>
+      <div class="cart">
+        <span class="fa-layers fa-fw fa-2x" @click="toggleCart()">
+          <i class="fas fa-shopping-cart"></i>
+          <span v-if="cartIsNotEmpty" class="fa-layers-counter" style="background:Tomato">{{ cartItems.length }}</span>
+        </span>
+      </div>
+    </div>
+    <div class="main">
+      <div class="content">
+        <div class="products">
+          <div v-for="p in products">
+            <div class="image" v-bind:style="{ backgroundImage: 'url(' + p.image + ')'}"></div>
+            <div class="info">
+              <h4 class="title">{{p.title}}</h4>
+              <h5 class="price">{{p.price | currency}}</h5>
+            </div>
+            <button :disabled="p.stock < 1" @click="buy(p)">Buy It</button>
+            <div class="stock">
+              {{p.stock}} available in stock.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <transition name="fade">
+      <div class="modal-backdrop" v-if="showCart">
+        <div class="modal">
+          <div class="modal-header">
+            <h2>Shopping Cart</h2>
+            <div @click="toggleCart()">
+              <i class="far fa-window-close"></i>
+            </div>
+          </div>
+          <div class="modal-main">
+            <div v-if="cartIsNotEmpty">
+              <div class="cart-item" v-for="p in cartItems">
+                <img v-bind:src="p.image">
+                <h4>{{p.title}}</h4>
+                <div>
+                  <h4>{{p.price | currency}}</h4>
+                </div>
+              </div>
+            </div>
+            <div v-else>
+              <p>
+                No items in your cart, start shopping!
+              </p>
+            </div>
+          </div>
+          <div class="modal-footer" v-if="cartIsNotEmpty">
+              <button>Checkout</button>
+              <div>
+                {{cartItems.length}} Items - {{cartItems.reduce((total,item) => total + item.price, 0) | currency}}
+              </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </div>
+  <script src="node_modules/vue/dist/vue.min.js"></script>
+  <script src="node_modules/vuex/dist/vuex.min.js"></script>
+  <script src="node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
+  <script>
+    let store = new Vuex.Store({
+      state: {
+        cart: {
+          show: false,
+          items: []
+        },
+        products: [
+          {
+            title: 'Bud (3.5g)',
+            image: 'https://ams.iqmetrix.net/images/f0d82dbb-062c-4c95-b288-1fa6db50982e/preview/725/725',
+            price: 52,
+            stock: 10,
+          },
+          {
+            title: 'Grinder',
+            image: 'https://ams.iqmetrix.net/images/f961955a-1908-4a64-bed4-6a22da1da18a/preview/725/725',
+            price: 10,
+            stock: 10,
+          },
+          {
+            title: 'Wood Pipe',
+            image: 'https://ams.iqmetrix.net/images/63ac0df8-dcc7-4b8b-aec1-17858488c45e/preview/725/725',
+            price: 28,
+            stock: 10,
+          },
+          {
+            title: 'Seeds',
+            image: 'https://ams.iqmetrix.net/images/4ede3129-5c36-4e50-9dbe-b79b2df8e7a3/preview/725/725',
+            price: 68,
+            stock: 10
+          },
+          {
+            title: 'Preroll',
+            image: 'https://ams.iqmetrix.net/images/504a8d17-a60f-490e-8302-f691330b367d/preview/725/725',
+            price: 15,
+            stock: 10
+          },
+          {
+            title: 'Papers',
+            image: 'https://ams.iqmetrix.net/images/1173a293-460d-4b83-aeed-a67ec3b11b5f/preview/725/725',
+            price: 16,
+            stock: 10
+          },
+          {
+            title: 'Lighter',
+            image: 'https://ams.iqmetrix.net/images/38b457e2-488b-43b6-94b8-123b4738029b/preview/725/725',
+            price: 3.99,
+            stock: 10
+          },
+          {
+            title: 'CBD Gels',
+            image: 'https://ams.iqmetrix.net/images/84820b0f-7e80-498e-9b5e-dddba409d275/preview/725/725',
+            price: 98,
+            stock: 10
+          }
+        ],
+        sale: {
+          expires: new Date(2020, 4, 20)
+        },
+        now: new Date()
+      },
+      mutations: {
+        buy: (state, product) => {
+          state.cart = { ...state.cart, items: [...state.cart.items, product]};
+          state.products = state.products.map(p => {
+            return p.title === product.title ? {...p, stock: p.stock-1} : p;
+          });
+        },
+
+        toggleCart: (state) => {
+          state.cart = {...state.cart, show:  !state.cart.show}
+        }
+      }
+    });
+    new Vue({
+      el: '#app',
+      computed: {
+        products: () => store.state.products,
+        cartItems: () => store.state.cart.items,
+        showCart: () => store.state.cart.show,
+        cartIsNotEmpty: () => store.state.cart.items.length > 0,
+        saleIsActive: () => {
+          let now = store.state.now;
+          let expiry = store.state.sale.expires;
+          return now < expiry;
+        },
+        saleExpiry: () => {
+          let now = store.state.now;
+          let expiry = store.state.sale.expires;
+          return Math.floor((expiry.getTime() - now.getTime()) / (1000 * 3600 * 24));
+        }
+      },
+      methods: {
+        buy: (product) => store.commit("buy", product),
+        toggleCart: () => {
+          console.log("toggleCart");
+          store.commit("toggleCart")
+        }
+      },
+      filters: {
+        currency: (value) => "$" + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
+      }
+    });
+  </script>
+</body>
