@@ -6,7 +6,8 @@
     "node-sass": "^4.13.0"
   },
   "scripts": {
-    "start": "node-sass -w style.scss -o . & http-server -c-1 ."
+    "build": "node-sass style.scss -o .",
+    "start": "npm run build && node-sass -w style.scss -o . & http-server -c-1 ."
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.0",
