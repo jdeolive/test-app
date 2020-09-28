@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "devDependencies": {
     "http-server": "^0.12.1",
-    "node-sass": "^4.13.0"
+    "node-sass": "^4.13.1"
   },
   "scripts": {
     "build": "node-sass style.scss -o .",
