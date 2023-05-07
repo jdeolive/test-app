@@ -2,7 +2,7 @@
   "name": "test-app",
   "version": "1.0.0",
   "devDependencies": {
-    "http-server": "^0.12.1",
+    "http-server": "^0.12.3",
     "node-sass": "^4.13.1"
   },
   "scripts": {
